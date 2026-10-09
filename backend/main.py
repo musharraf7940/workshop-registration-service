@@ -7,15 +7,17 @@ from models import User
 from auth import verify_password, create_token, get_current_user
 from routers import users, workshops
 import seed
+import os
 
 Base.metadata.create_all(bind=engine)
 seed.run()
 
 app = FastAPI(title="Workshop Registration Service")
+origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[o.strip() for o in origins if o.strip()],
     allow_methods=["*"],
     allow_headers=["*"],
 )
